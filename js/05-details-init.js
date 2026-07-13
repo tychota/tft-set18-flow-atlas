@@ -1,0 +1,1 @@
+const COMPOSITION_DETAILS = {};

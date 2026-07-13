@@ -1,0 +1,301 @@
+:root {
+  color-scheme: dark;
+  --color-bg: oklch(18% 0.018 245);
+  --color-bg-deep: oklch(14% 0.016 245);
+  --color-surface: oklch(22% 0.022 245);
+  --color-surface-2: oklch(25% 0.024 245);
+  --color-surface-selected: oklch(27% 0.035 158);
+  --color-border: oklch(34% 0.03 245);
+  --color-border-strong: oklch(44% 0.05 245);
+  --color-ink: oklch(94% 0.012 245);
+  --color-ink-muted: oklch(75% 0.025 245);
+  --color-ink-soft: oklch(66% 0.025 245);
+  --color-accent: oklch(72% 0.14 158);
+  --color-accent-soft: oklch(34% 0.06 158);
+  --color-focus: oklch(82% 0.14 86);
+  --color-gold: oklch(82% 0.14 86);
+  --color-danger: oklch(68% 0.17 25);
+  --color-warning: oklch(76% 0.14 74);
+  --color-success: oklch(72% 0.14 158);
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --radius-control: 8px;
+  --radius-surface: 12px;
+  --radius-panel: 16px;
+  --shadow-raised: 0 4px 8px oklch(8% 0.02 245 / 0.34);
+  --transition-fast: 160ms cubic-bezier(0.22, 1, 0.36, 1);
+  --transition-medium: 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI Variable", "Segoe UI", sans-serif;
+  background: var(--color-bg);
+  color: var(--color-ink);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 20rem;
+  background: var(--color-bg-deep);
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-size: 1rem;
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button,
+select,
+input {
+  min-height: 44px;
+}
+
+a {
+  color: var(--color-accent);
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  color: var(--color-ink);
+}
+
+button,
+a,
+input,
+select,
+[tabindex] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: fixed;
+  inset: var(--space-3) auto auto var(--space-3);
+  z-index: 50;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-control);
+  background: var(--color-focus);
+  color: var(--color-bg-deep);
+  font-weight: 750;
+  transform: translateY(-180%);
+  transition: transform var(--transition-fast);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.app-header {
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding: var(--space-4) clamp(1rem, 3vw, 2.25rem);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-deep);
+}
+
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.brand-mark {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-control);
+  background: var(--color-accent);
+  color: var(--color-bg-deep);
+  font-size: 1.125rem;
+  font-weight: 850;
+  letter-spacing: -0.02em;
+}
+
+.product-name,
+.product-subtitle {
+  margin: 0;
+}
+
+.product-name {
+  font-size: 1rem;
+  font-weight: 780;
+}
+
+.product-subtitle {
+  color: var(--color-ink-muted);
+  font-size: 0.8125rem;
+}
+
+.data-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-ink-muted);
+  font-size: 0.8125rem;
+}
+
+.data-status span:first-child {
+  color: var(--color-warning);
+  font-weight: 700;
+}
+
+.command-bar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: end;
+  gap: var(--space-3);
+  padding: var(--space-3) clamp(1rem, 3vw, 2.25rem);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: 0 4px 8px oklch(8% 0.02 245 / 0.22);
+}
+
+.filter-field {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 9rem;
+}
+
+.filter-search {
+  flex: 1 1 20rem;
+  max-width: 34rem;
+}
+
+.filter-field label {
+  color: var(--color-ink-muted);
+  font-size: 0.75rem;
+  font-weight: 680;
+}
+
+.filter-field input,
+.filter-field select {
+  width: 100%;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-deep);
+  color: var(--color-ink);
+  padding: 0 var(--space-3);
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.filter-field input:hover,
+.filter-field select:hover {
+  border-color: var(--color-ink-soft);
+}
+
+.filter-field input:focus,
+.filter-field select:focus {
+  border-color: var(--color-focus);
+  background: var(--color-bg);
+}
+
+.filter-field input::placeholder {
+  color: oklch(69% 0.025 245);
+}
+
+.result-count {
+  margin: 0 0 0.68rem auto;
+  color: var(--color-ink-muted);
+  white-space: nowrap;
+}
+
+.app-shell {
+  min-width: 0;
+  max-width: 100%;
+  min-height: calc(100vh - 133px);
+  display: grid;
+  grid-template-columns: minmax(18rem, 25rem) minmax(0, 1fr);
+}
+
+.composition-index {
+  min-width: 0;
+  max-width: 100%;
+  border-right: 1px solid var(--color-border);
+  background: var(--color-bg-deep);
+}
+
+.index-heading {
+  padding: var(--space-6) var(--space-5) var(--space-4);
+}
+
+.index-heading h1,
+.workspace-header h2,
+.board-step h3 {
+  text-wrap: balance;
+}
+
+.index-heading h1 {
+  margin: 0;
+  font-size: 1.35rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.index-heading p {
+  max-width: 31ch;
+  margin: var(--space-2) 0 0;
+  color: var(--color-ink-muted);
+  font-size: 0.875rem;
+}
+
+.composition-list {
+  min-width: 0;
+  max-width: 100%;
+  display: grid;
+  gap: 1px;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-border);
+}
+
+.composition-row {
+  width: 100%;
+  min-height: 86px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  align-items: center;
+  border: 0;
+  border-radius: 0;
+  padding: var(--space-3) var(--space-5);
+  background: var(--color-bg-deep);
+  color: var(--color-ink);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.composition-row:hover {
+  background: var(--color-surface);
+}
+
+.composition-row:active {
+  background: var(--color-surface-2);
+}

@@ -15,3 +15,5 @@ python3 -m http.server 8000
 Then open `http://localhost:8000`.
 
 The site is deployed automatically to GitHub Pages after every push to `main`.
+
+Pages deployment enabled and retriggered on 2026-07-14.

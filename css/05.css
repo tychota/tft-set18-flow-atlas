@@ -1,0 +1,48 @@
+@media (max-width: 960px) {
+  .board-step-heading {
+    grid-template-columns: 1fr;
+  }
+
+  .roll-summary {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .unit-grid {
+    grid-template-columns: repeat(auto-fit, minmax(10.75rem, 1fr));
+  }
+
+  .unit-tile {
+    min-height: 14.5rem;
+    grid-template-rows: auto auto minmax(2.25rem, auto) 2.5rem;
+    align-items: start;
+  }
+
+  .unit-main {
+    grid-template-columns: 60px minmax(0, 1fr);
+  }
+
+  .unit-portrait {
+    width: 60px;
+    height: 60px;
+  }
+
+  .roll-summary {
+    display: grid;
+  }
+
+  .roll-costs {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 390px) {
+  .unit-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .unit-tile {
+    min-height: 13.75rem;
+  }
+}

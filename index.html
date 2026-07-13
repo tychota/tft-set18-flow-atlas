@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="TFT Set 18 composition flow atlas: starters, transitions, reroll lines, Fast 8 and Fast 9 theorycraft.">
+  <title>TFT Set 18 Flow Atlas</title>
+<meta name="description" content="TFT Set 18 Flow Atlas: starters, transitions, reroll lines, Fast 8 and Fast 9 theorycrafting.">
+<meta property="og:title" content="TFT Set 18 Flow Atlas">
+<meta property="og:description" content="Starter, transition and endgame composition flows for TFT Set 18.">
+<meta property="og:type" content="website">
+  <link rel="preconnect" href="https://ap.tft.tools" crossorigin>
+  <link rel="preconnect" href="https://cdn.mobalytics.gg" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to composition workspace</a>
+
+  <header class="app-header">
+    <div class="brand-lockup">
+      <div class="brand-mark" aria-hidden="true">18</div>
+      <div>
+        <p class="product-name">Flow Atlas</p>
+        <p class="product-subtitle">Set 18 theorycraft</p>
+      </div>
+    </div>
+    <div class="data-status" id="data-status"></div>
+  </header>
+
+  <nav class="command-bar" aria-label="Composition filters">
+    <div class="filter-field filter-search">
+      <label for="search-filter">Search comps</label>
+      <input id="search-filter" type="search" autocomplete="off" placeholder="Blossom, reroll, AD…">
+    </div>
+    <div class="filter-field">
+      <label for="damage-filter">Damage</label>
+      <select id="damage-filter">
+        <option>All</option>
+        <option>AD</option>
+        <option>AP</option>
+      </select>
+    </div>
+    <div class="filter-field">
+      <label for="plan-filter">Plan</label>
+      <select id="plan-filter">
+        <option>All</option>
+        <option>Reroll</option>
+        <option>Fast 8</option>
+        <option>Fast 9</option>
+      </select>
+    </div>
+    <p class="result-count" id="result-count" aria-live="polite"></p>
+  </nav>
+
+  <main id="main-content" class="app-shell">
+    <aside class="composition-index" aria-label="Composition index">
+      <div class="index-heading">
+        <h1>Composition lines</h1>
+        <p>Choose the line that matches your opener, components, and economy.</p>
+      </div>
+      <div id="composition-list" class="composition-list"></div>
+    </aside>
+
+    <section id="composition-workspace" class="composition-workspace" aria-labelledby="workspace-title" tabindex="-1">
+      <div class="workspace-empty">
+        <h2 id="workspace-title">Select a composition</h2>
+        <p>The full starter → transition → endgame path will appear here.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div>
+      <p>Pre-PBE theorycraft. Verify mechanics and numbers again when Set 18 reaches PBE.</p>
+      <p class="asset-note">Set 18 portrait and trait assets load from tactics.tools; deterministic initials keep every board readable offline.</p>
+    </div>
+    <div class="source-links" aria-label="Research sources">
+      <a href="https://tactics.tools/info/set-update">Set 18 data</a>
+      <a href="https://www.metatft.com/new-set">MetaTFT</a>
+      <a href="https://mobalytics.gg/tft/set18/champions">Mobalytics</a>
+      <a href="https://tftflow.com/">TFTFlow</a>
+      <a href="https://tftacademy.com/">TFT Academy</a>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

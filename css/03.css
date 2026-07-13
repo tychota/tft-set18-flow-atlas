@@ -1,0 +1,336 @@
+.unit-tile {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.unit-portrait {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  overflow: hidden;
+  border-radius: var(--radius-control);
+  background: var(--color-bg-deep);
+}
+
+.unit-portrait-image,
+.unit-portrait-fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.unit-portrait-image {
+  z-index: 2;
+  display: block;
+  object-fit: cover;
+  object-position: center center;
+}
+
+.unit-portrait-fallback {
+  display: grid;
+  place-items: center;
+  color: var(--cost-color, var(--color-gold));
+  font-size: 1rem;
+  font-weight: 850;
+}
+
+.unit-portrait.is-missing .unit-portrait-image {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .unit-tile {
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+
+  .unit-portrait {
+    width: 48px;
+    height: 48px;
+  }
+
+  .item-holder {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+}
+
+.analysis-section {
+  display: grid;
+  gap: var(--space-5);
+  margin-top: var(--space-7);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+}
+
+.analysis-intro {
+  grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.85fr);
+}
+
+.analysis-section h3,
+.analysis-section h4,
+.analysis-section p {
+  margin-top: 0;
+}
+
+.analysis-section h3 {
+  margin-bottom: var(--space-2);
+  font-size: 1.2rem;
+  letter-spacing: -0.015em;
+}
+
+.analysis-section h4 {
+  margin-bottom: var(--space-2);
+  font-size: 0.875rem;
+}
+
+.analysis-section p {
+  max-width: 75ch;
+  color: var(--color-ink-muted);
+  text-wrap: pretty;
+}
+
+.confidence-note {
+  margin-bottom: 0;
+  padding-top: var(--space-3);
+  color: var(--color-ink-soft);
+  font-size: 0.875rem;
+}
+
+.confidence-note strong {
+  color: var(--color-warning);
+}
+
+.entry-conditions {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.decision-list {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.decision-list li {
+  position: relative;
+  padding-left: 1.25rem;
+  color: var(--color-ink-muted);
+}
+
+.decision-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--color-ink-soft);
+  font-weight: 900;
+}
+
+.decision-list.positive li::before {
+  content: "✓";
+  color: var(--color-success);
+}
+
+.decision-list.negative li::before {
+  content: "×";
+  color: var(--color-danger);
+}
+
+.analysis-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-5);
+  align-items: baseline;
+}
+
+.analysis-heading p {
+  margin-bottom: 0;
+  font-size: 0.875rem;
+}
+
+.stage-plan {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--radius-surface);
+  background: var(--color-border);
+  list-style: none;
+}
+
+.stage-plan li {
+  min-height: 9.5rem;
+  padding: var(--space-4);
+  background: var(--color-surface);
+}
+
+.stage-plan strong {
+  color: var(--color-gold);
+  font-size: 0.8125rem;
+}
+
+.stage-plan p {
+  margin: var(--space-3) 0 0;
+  font-size: 0.875rem;
+}
+
+.item-routes {
+  display: grid;
+  gap: 1px;
+  overflow: hidden;
+  border-radius: var(--radius-surface);
+  background: var(--color-border);
+}
+
+.item-route {
+  display: grid;
+  grid-template-columns: minmax(14rem, 0.8fr) minmax(10rem, 0.45fr) minmax(0, 1fr) minmax(12rem, 0.7fr);
+  gap: var(--space-4);
+  align-items: center;
+  padding: var(--space-4);
+  background: var(--color-surface);
+}
+
+.item-transfer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.item-transfer span {
+  color: var(--color-accent);
+  font-size: 1.1rem;
+}
+
+.item-family {
+  margin-bottom: 0;
+  color: var(--color-gold) !important;
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.item-route > p {
+  margin-bottom: 0;
+  font-size: 0.875rem;
+}
+
+.item-route ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: flex-end;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item-route li {
+  padding: 0.3rem 0.5rem;
+  border-radius: var(--radius-control);
+  background: var(--color-bg-deep);
+  color: var(--color-ink-muted);
+  font-size: 0.75rem;
+}
+
+.recommendation-columns {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+
+.recommendation-list {
+  display: grid;
+  gap: 1px;
+  overflow: hidden;
+  border-radius: var(--radius-surface);
+  background: var(--color-border);
+}
+
+.recommendation-row {
+  display: grid;
+  grid-template-columns: minmax(10rem, 0.7fr) minmax(0, 1fr);
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-surface);
+}
+
+.recommendation-row strong {
+  color: var(--color-gold);
+}
+
+.recommendation-row p {
+  margin: var(--space-1) 0 0;
+  font-size: 0.8125rem;
+}
+
+.recommendation-definition {
+  color: var(--color-ink-soft) !important;
+}
+
+.pivot-section .decision-list {
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: var(--space-4);
+}
+
+@media (max-width: 1100px) {
+  .analysis-intro,
+  .recommendation-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .item-route {
+    grid-template-columns: minmax(12rem, 0.8fr) minmax(8rem, 0.4fr) minmax(0, 1fr);
+  }
+
+  .item-route ul {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 720px) {
+  .analysis-heading {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .item-route,
+  .recommendation-row {
+    grid-template-columns: 1fr;
+  }
+
+  .item-route ul {
+    grid-column: auto;
+  }
+
+  .stage-plan {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Set 18 board intelligence: one coherent tile owns portrait, cost, star, traits, and items. */
+.composition-row-synergy {
+  color: var(--color-accent) !important;
+  font-size: 0.75rem !important;
+  font-weight: 700;
+  -webkit-line-clamp: 1 !important;
+}
+
+.board-step-heading {
+  grid-template-columns: minmax(15rem, 0.65fr) minmax(20rem, 1fr);
+  align-items: start;
+  margin-bottom: var(--space-3);
+}
+
+.board-step-heading > div:first-child {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.board-step-heading p {
+  max-width: 58ch;
+}

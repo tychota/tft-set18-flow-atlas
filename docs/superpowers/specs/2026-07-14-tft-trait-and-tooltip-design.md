@@ -1,36 +1,33 @@
-# TFT Set 18 Trait Badges and Tooltip Design
+# TFT Set 18 Trait Badges, Tooltips, and Composition Expansion
 
 ## Purpose
 
-Improve the deployed TFT Set 18 Flow Atlas so trait breakpoints, champion abilities, and item effects behave like a compact in-game information layer rather than static labels.
+Improve the deployed TFT Set 18 Flow Atlas so trait activation, champion abilities, item effects, and composition paths behave like a compact in-game information layer rather than static labels.
 
-The change must answer three questions immediately:
+The change must answer four questions immediately:
 
-1. Which trait breakpoint is actually active?
-2. What does that active breakpoint do?
+1. Which trait tier is actually active at this exact unit count?
+2. What does that active tier do?
 3. What do the hovered champion and item do?
+4. Which other credible starter-to-endgame lines can be played from the same Set 18 roster?
 
-The site must keep the current dense product layout and avoid turning every board into a wall of explanatory text.
+The site must keep the current dense product layout and avoid turning every board into a wall of text.
 
 ## Scope
 
 This feature covers:
 
 - repulling Set 18 trait, champion, and item data;
-- replacing approximate trait thresholds and descriptions with structured breakpoint data;
-- TFT-style trait badges with icon, current unit count, and tier treatment;
-- hover and tap tooltips for traits, champions, and items;
-- locally vendored champion, trait, and item assets where licensing and source availability permit;
-- explicit fallbacks when a Set 18 asset or description is unavailable;
-- tests for breakpoint activation, tooltip content, keyboard access, and mobile interaction.
+- replacing approximate trait thresholds with explicit activation rules;
+- supporting ordinary cumulative traits, exact-count traits, sparse traits, and traits with inactive gaps;
+- TFT-style trait badges with icon, raw unit count, and active tier treatment;
+- hover, focus, and tap tooltips for traits, champions, and items;
+- locally vendored champion, trait, and item assets where source availability permits;
+- adding between 2 and 6 additional complete compositions;
+- providing starter, transition, endgame, item routes, roll timing, and pivot rules for every new composition;
+- tests for activation rules, tooltip content, keyboard access, mobile interaction, and composition completeness.
 
-It does not cover:
-
-- live match data;
-- automatic patch ingestion on every deployment;
-- combat simulation;
-- positioning recommendations;
-- reproducing Riot's exact proprietary visual assets or animations when unavailable.
+It does not cover live match data, automatic patch ingestion on every deploy, combat simulation, exact positioning recommendations, or unsupported proprietary animations.
 
 ## Source hierarchy
 
@@ -38,21 +35,16 @@ Data must be pulled again before implementation rather than trusting the current
 
 Preferred order:
 
-1. Riot or CommunityDragon structured game data for champion stats, abilities, traits, items, icons, and breakpoint styles.
+1. Riot or CommunityDragon structured game data for champion stats, abilities, traits, items, icons, activation rules, and tier styles.
 2. Tactics.tools Set 18 data when it exposes pre-release units or assets absent from Riot's public data.
-3. MetaTFT, Mobalytics, TFTFlow, and TFT Academy as corroborating presentation and strategy references, not as the canonical numerical source.
+3. MetaTFT, Mobalytics, TFTFlow, and TFT Academy as corroborating strategy and presentation references rather than canonical numerical sources.
 4. Existing hand-authored copy only as a temporary fallback, visibly marked as unverified.
 
-Every generated data file records:
+Every generated file records the source identifier, retrieval date, set or patch identifier when available, and whether each value is canonical, corroborated, or fallback.
 
-- source URL or source identifier;
-- retrieval date;
-- set and patch identifier when available;
-- whether the value is canonical, corroborated, or fallback.
+## Trait activation model
 
-## Trait data model
-
-A trait must no longer be represented as only a name, threshold array, and one generic description.
+A trait cannot be represented as only an ordered list of minimum thresholds. Some TFT traits are cumulative, while others activate only at exact counts or have inactive gaps.
 
 ```ts
 interface TraitDefinition {
@@ -60,271 +52,330 @@ interface TraitDefinition {
   name: string;
   iconPath: string;
   summary: string;
-  breakpoints: TraitBreakpoint[];
+  tiers: TraitTier[];
   source: DataSource;
 }
 
-interface TraitBreakpoint {
-  requiredUnits: number;
+interface TraitTier {
+  id: string;
+  label: string;
   style: "bronze" | "silver" | "gold" | "prismatic" | "unique";
+  activation: TraitActivationRule;
   effectText: string;
 }
+
+type TraitActivationRule =
+  | { kind: "range"; min: number; max: number | null }
+  | { kind: "exact"; count: number }
+  | { kind: "set"; counts: number[] };
 
 interface ActiveTraitState {
   traitId: string;
   unitCount: number;
-  activeBreakpoint: TraitBreakpoint | null;
-  nextBreakpoint: TraitBreakpoint | null;
-  unitsToNext: number | null;
+  activeTier: TraitTier | null;
+  nextRelevantTier: TraitTier | null;
+  progressText: string;
 }
 ```
 
-The active breakpoint is the highest breakpoint whose `requiredUnits` is less than or equal to the current unit count.
+### Standard cumulative example
 
-A count between breakpoints does not create a stronger effect. For example, when the repulled Blossom data contains breakpoints at 3 and 5, a board with 4 Blossom units still uses the 3-unit effect. The badge displays the raw count `4`, but its material and tooltip highlight remain those of the 3-unit breakpoint.
+A normal trait with breakpoints at 3 and 5 is normalized to ranges:
 
-The breakpoint style should come from game metadata where available. Only when the source does not expose a tier should the site use this fallback mapping by breakpoint order:
+- bronze: 3–4;
+- silver: 5 until the next tier.
 
-- first active breakpoint: bronze;
-- second: silver;
-- third: gold;
-- final chase breakpoint: prismatic;
-- special one-unit or bespoke traits: unique.
+A board with 4 units therefore displays the raw count `4`, but still uses the bronze 3-unit effect.
 
-This avoids falsely assuming that every trait has exactly four tiers.
+### Exact-count and sparse example
+
+The model must also support a trait shaped like:
+
+- exactly 1 unit: bronze active;
+- 2–3 units: inactive;
+- exactly 4 units: gold active.
+
+At counts 2 and 3, no trait tier is active. The badge remains neutral even though the raw count is visible. The tooltip highlights no row and explains that the current count is an inactive state.
+
+This behavior must come from repulled game data. The implementation must not infer cumulative activation merely because tier counts are numerically ordered.
+
+### Validation rules
+
+- activation rules may contain intentional gaps;
+- activation rules for the same trait must not overlap unless the source explicitly defines a priority;
+- exactly zero or one tier must match a given count;
+- exact and set-based activations are first-class, not special-case UI hacks;
+- source-provided tier styling wins over fallback styling.
+
+When tier styling is absent, the fallback order is bronze, silver, gold, then prismatic for the final chase tier. Bespoke one-unit traits use `unique` only when supported by the source.
 
 ## Trait badge design
 
-Each board phase displays only traits that are active or one unit away from activation. The compact badge contains:
+Each board phase displays active traits and optionally traits one unit away from a relevant activation.
+
+A compact badge contains:
 
 - trait icon;
-- current unit count;
+- raw unit count;
 - trait name;
-- active material treatment.
+- material treatment for the currently active tier.
 
-Example visual label:
+Example:
 
 ```text
 [Blossom icon] 4 Blossom
 ```
 
-The badge color and border represent the active breakpoint, not the raw count.
+The count communicates board composition. The material treatment communicates power.
 
 States:
 
 - inactive: neutral dark treatment;
-- bronze: warm bronze border and icon frame;
-- silver: cool silver treatment;
-- gold: restrained gold treatment;
-- prismatic: high-contrast iridescent treatment without animation by default;
-- unique: trait-specific neutral accent when the game data marks a bespoke trait.
+- bronze: warm bronze frame;
+- silver: cool silver frame;
+- gold: restrained gold frame;
+- prismatic: high-contrast iridescent frame without mandatory animation;
+- unique: source-defined bespoke treatment.
 
-The badge must not display misleading wording such as `4 Blossom active`. The count and active effect remain separate concepts.
+A badge must never imply that an intermediate count grants a stronger tier. For exact-count traits, inactive counts remain visibly inactive.
 
 ## Trait tooltip
 
-Hovering, focusing, or tapping a trait badge opens a tooltip anchored to the badge.
+Hovering, focusing, or tapping a trait badge opens an anchored tooltip.
 
 Header:
 
-- trait icon;
+- icon;
 - trait name;
 - current count;
 - short summary.
 
 Body:
 
-- one row per breakpoint, in ascending order;
-- required unit count;
+- one row per tier;
+- activation requirement written exactly, such as `3+`, `3–4`, `exactly 1`, or `1 / 4`;
 - complete effect text;
-- game tier styling.
+- source tier styling.
 
-The currently active breakpoint row is highlighted using its bronze, silver, gold, prismatic, or unique treatment. Higher breakpoints remain subdued. Earlier achieved breakpoints may retain a small completed marker, but only the highest active row receives the primary highlight.
+Only the tier matching the current count receives the primary highlight. Higher, lower, or currently invalid tiers remain subdued. Earlier tiers are not shown as active when the current count has moved into an inactive gap.
 
-A progress line appears below the rows:
-
-```text
-4 / 5 units — 1 more Blossom unit for the next breakpoint.
-```
-
-At the maximum breakpoint it becomes:
+Progress examples:
 
 ```text
-Maximum breakpoint active.
+4 / 5 units — 1 more Blossom unit for the next tier.
 ```
-
-At zero active breakpoints:
 
 ```text
-2 / 3 units — trait not active yet.
+2 units — no Mentor tier is active at this count. Active again at 4.
 ```
+
+```text
+Maximum tier active.
+```
+
+The active row must be distinguishable by iconography and weight as well as color.
 
 ## Champion tooltip
 
-Hovering, focusing, or tapping a champion portrait or name opens a champion tooltip.
-
-Required fields:
+Hovering, focusing, or tapping a portrait or champion name opens a tooltip containing available sourced data:
 
 - portrait;
 - name;
-- shop cost and cost color;
-- target star level for the selected board phase;
+- cost and cost color;
+- target star level for the selected phase;
 - traits with icons;
 - role;
-- ability name;
-- complete ability description;
-- mana start and maximum mana when available;
-- attack range when available;
-- whether the unit is an interim item holder or final item recipient;
-- currently assigned items.
+- ability name and full description;
+- starting and maximum mana;
+- attack range;
+- item-holder or final-recipient status;
+- currently assigned items;
+- pre-release or incomplete-data note when appropriate.
 
-The ability text must come from the repulled source and preserve numerical values when available. Unverified pre-PBE values receive a visible `pre-release` note.
-
-The tooltip must not infer exact mechanics from strategy prose. Missing fields are omitted rather than invented.
+Missing fields are omitted rather than invented. Strategy prose must not be presented as canonical ability mechanics.
 
 ## Item assets and tooltips
 
-Item icons must be downloaded into the repository and referenced locally from `assets/items/`.
+Item icons must be downloaded into `assets/items/` and served locally by GitHub Pages.
 
-The fetch pipeline should:
+The Python pipeline must:
 
-1. read the canonical item identifier from structured data;
+1. resolve the canonical item identifier;
 2. download the highest-quality square icon available;
 3. validate MIME type and minimum dimensions;
 4. save a deterministic filename;
-5. record the source and checksum in an asset manifest;
-6. use a generated text fallback only if every source fails.
+5. record source and checksum in the manifest;
+6. retain a generated fallback only if all sources fail.
 
-Item tooltip fields:
+Item tooltips contain icon, name, stat bonuses, complete effect text, deterministic functional tags, current holder, and final transfer target.
 
-- icon;
-- item name;
-- stat bonuses;
-- full effect text;
-- tags such as `carry`, `tank`, `anti-heal`, or `shred` only when derived from deterministic project metadata;
-- holder and final transfer target in the selected composition phase.
+## Additional composition expansion
 
-The board continues to show compact icon trays. Detailed text lives only in the tooltip.
+The current seven lines expand to between nine and thirteen total lines.
+
+Implementation adds at least two and at most six new compositions after the data repull. The final count depends on whether a candidate has enough sourced information and a coherent path; weak filler lines must not be added merely to reach six.
+
+### Candidate pool
+
+The repulled roster should be evaluated for distinct archetypes not already represented, with likely candidates including:
+
+- Coven-based Caitlyn or Elise lines;
+- Eldritch Warwick or Azir lines;
+- Lunar Aphelios or Alune lines;
+- Primal Sivir or Nidalee flex;
+- Fae Tristana or Lillia variants;
+- another credible four-cost or legendary cap discovered during the data pull.
+
+These are research candidates, not pre-approved final comps. The implementation chooses only lines supported by the repulled data and at least one corroborating strategy source or a clearly documented first-principles rationale.
+
+### Required composition structure
+
+Every new composition must contain:
+
+- identity, damage profile, economy plan, roll or stabilization level, and confidence label;
+- realistic Stage 2 starter board;
+- Stage 3 or early Stage 4 transition board;
+- endgame board;
+- star targets on every unit;
+- actual active trait states for every phase;
+- item holders and final recipients;
+- item routes;
+- stage-by-stage economy plan;
+- entry conditions and avoid conditions;
+- Wisp and augment considerations;
+- pivot and exit rules;
+- explanation of why the line is distinct from an existing composition.
+
+### Selection criteria
+
+A candidate is included only when it:
+
+- adds a meaningfully different roll level, carry profile, or trait shell;
+- has a starter and transition that can reasonably exist before the final board;
+- does not depend on an exact legendary appearing without a fallback;
+- can absorb a coherent item package;
+- is not merely an alternate endgame screenshot of an existing line;
+- has enough sourced unit and trait data to avoid inventing mechanics.
+
+### Presentation
+
+The composition index gains optional filters for primary trait and carry cost. New lines use the same board, tooltip, and breakpoint system rather than bespoke markup.
 
 ## Interaction model
 
 Desktop:
 
-- pointer hover opens after a short delay of roughly 150 ms;
-- moving between the trigger and tooltip keeps it open;
+- hover opens after about 150 ms;
+- moving between trigger and tooltip keeps it open;
+- focus opens the same content;
 - Escape closes it;
-- keyboard focus opens the same content;
-- only one tooltip is open at a time.
+- only one tooltip is open at once.
 
-Touch devices:
+Touch:
 
-- first tap opens the tooltip;
-- tapping outside closes it;
+- first tap opens;
+- tapping outside closes;
 - tapping another trigger replaces it;
-- no behavior relies exclusively on hover.
+- narrow screens use a bottom sheet.
 
-Tooltips use semantic popover or dialog behavior according to browser support, with an accessible fallback.
-
-They must remain inside the viewport, flipping above or sideways when required. On narrow mobile screens, they become a bottom sheet rather than a tiny floating panel.
+Tooltips remain inside the viewport and restore focus correctly.
 
 ## Architecture
 
-The feature is split into four boundaries.
+### 1. Python data ingestion
 
-### 1. Data ingestion
+Generate versioned files:
 
-Python scripts fetch and normalize raw data into versioned JSON:
+- `data/set18/champions.json`;
+- `data/set18/traits.json`;
+- `data/set18/items.json`;
+- `data/set18/compositions.json`;
+- `data/set18/manifest.json`.
 
-- `data/set18/champions.json`
-- `data/set18/traits.json`
-- `data/set18/items.json`
-- `data/set18/manifest.json`
-
-The ingestion layer contains no rendering code.
+The ingestion layer contains no DOM code and retains the last verified output when a refresh fails.
 
 ### 2. Domain derivation
 
-JavaScript functions derive board-specific state:
+Pure JavaScript modules:
 
-- count each trait once per unique fielded champion;
-- find the active and next breakpoints;
-- attach target stars and item-holder status;
-- expose structured tooltip view models.
-
-The derivation layer contains no DOM manipulation.
+- count traits from each board phase;
+- match exact, range, or set activation rules;
+- derive active tier and progress text;
+- derive champion, trait, and item tooltip view models;
+- validate complete composition paths.
 
 ### 3. Rendering
 
-Reusable components render:
+Reusable components:
 
 - `TraitBadge`;
 - `TraitTooltip`;
 - `ChampionTooltip`;
 - `ItemIcon`;
-- `ItemTooltip`.
-
-The existing board renderer consumes these components rather than constructing tooltip markup ad hoc.
+- `ItemTooltip`;
+- existing board and composition components consuming shared models.
 
 ### 4. Tooltip controller
 
-One controller owns:
-
-- open and close state;
-- pointer, keyboard, and touch events;
-- focus restoration;
-- viewport positioning;
-- mobile bottom-sheet behavior.
+One controller owns open state, pointer and keyboard events, touch behavior, focus restoration, viewport positioning, and mobile bottom-sheet presentation.
 
 ## Error handling
 
-- Missing trait effect text: show the breakpoint and `Description unavailable in current data source`.
-- Missing champion ability: omit the ability section and mark the champion data as incomplete.
-- Failed local image: use the deterministic fallback glyph without shifting layout.
-- Invalid breakpoint ordering: fail the data validation and block deployment.
-- Duplicate trait counts from duplicated board entries: count unique fielded unit instances as represented by the board model, not repeated metadata rows.
-- Source fetch failure: retain the last verified generated data and report the failed refresh; never replace good data with an empty file.
+- missing effect text: show an explicit unavailable marker;
+- missing ability data: omit the section and mark data incomplete;
+- failed local image: preserve dimensions and show a deterministic fallback;
+- overlapping activation rules: block generation unless source priority is explicit;
+- inactive gaps: preserve the gap and render neutral state;
+- failed refresh: retain the last valid generated dataset;
+- incomplete composition: fail validation rather than publishing a board without starter or transition data.
 
 ## Tests
 
 ### Python ingestion tests
 
-- each trait has strictly increasing breakpoint counts;
-- each breakpoint has non-empty effect text or an explicit unavailable marker;
-- each champion references existing traits;
-- every item icon in generated data exists locally;
-- asset checksums match the manifest;
-- source metadata is present.
+- every trait tier has a valid activation rule;
+- exact-count and sparse activation rules survive normalization;
+- rules do not overlap unexpectedly;
+- gaps are allowed;
+- every champion references existing traits;
+- every local item icon exists and matches its checksum;
+- source metadata is present;
+- every new composition has starter, transition, and endgame phases.
 
 ### JavaScript unit tests
 
-- counts below the first threshold are inactive;
-- an intermediate count such as 4 with thresholds 3 and 5 activates only 3;
-- exact thresholds activate the matching row;
-- counts above the maximum retain the maximum breakpoint;
-- unique traits use their source style;
-- tooltip view models contain the correct active row and progress text.
+- normal intermediate counts retain the previous cumulative tier;
+- exact count 1 can be active while counts 2 and 3 are inactive;
+- exact count 4 can activate a later tier;
+- no tier matches an intentional gap;
+- counts above a normal maximum retain the maximum tier only when its rule is open-ended;
+- tooltip progress text describes both next thresholds and inactive gaps;
+- each composition phase derives the correct trait state.
 
 ### Browser tests
 
-- hover opens and closes correctly;
-- keyboard focus and Escape work;
-- touch tap opens the bottom sheet;
-- tooltip remains within desktop and mobile viewports;
-- active breakpoint row is visually distinguishable without relying only on color;
-- missing images preserve tile dimensions;
-- no horizontal overflow at 390, 768, 1024, and 1440 px widths.
+- hover, focus, Escape, tap, and outside-click behavior;
+- mobile bottom sheet;
+- viewport collision handling;
+- active tier row distinguishable without color alone;
+- exact-count inactive badge remains neutral;
+- local item images load without third-party requests;
+- champion and item tooltips contain sourced fields;
+- all 9–13 composition lines render starter, transition, and endgame boards;
+- no horizontal overflow at 390, 768, 1024, and 1440 px.
 
 ## Acceptance criteria
 
 The feature is complete when:
 
-- all Set 18 traits used by the seven compositions have repulled breakpoint data;
-- raw unit count and active breakpoint are visually distinct;
-- a non-breakpoint count never receives a higher tier treatment;
-- every active trait badge has an icon;
-- each trait tooltip highlights exactly one highest active breakpoint row;
+- all used Set 18 traits have repulled activation data;
+- exact-count and inactive-gap traits are represented without cumulative assumptions;
+- raw count and active tier are visually distinct;
+- each trait tooltip highlights exactly one matching tier or clearly shows no active tier;
 - champion tooltips show sourced abilities and available stats;
-- item icons are served locally from the GitHub Pages repository;
-- trait, champion, and item details work with mouse, keyboard, and touch;
-- automated validation and browser tests pass;
-- the deployed Pages site still works without third-party item-image hotlinks.
+- item icons are served locally;
+- between two and six credible new compositions are added;
+- every new composition includes starter, transition, endgame, items, economy, and pivot guidance;
+- the site works with mouse, keyboard, and touch;
+- validation, unit tests, and browser tests pass;
+- GitHub Pages deploys without third-party item-image hotlinks.

@@ -4,105 +4,38 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
-  <meta name="description" content="TFT Set 18 composition flow atlas: starters, transitions, reroll lines, Fast 8 and Fast 9 theorycraft.">
+  <meta name="description" content="TFT Set 18 Flow Atlas with exact trait tiers, tooltips, items, starters, transitions, reroll, Fast 8 and Fast 9 lines.">
   <title>TFT Set 18 Flow Atlas</title>
-<meta name="description" content="TFT Set 18 Flow Atlas: starters, transitions, reroll lines, Fast 8 and Fast 9 theorycrafting.">
-<meta property="og:title" content="TFT Set 18 Flow Atlas">
-<meta property="og:description" content="Starter, transition and endgame composition flows for TFT Set 18.">
-<meta property="og:type" content="website">
-  <link rel="preconnect" href="https://ap.tft.tools" crossorigin>
-  <link rel="preconnect" href="https://cdn.mobalytics.gg" crossorigin>
-  <link rel="stylesheet" href="css/01.css">
-  <link rel="stylesheet" href="css/02.css">
-  <link rel="stylesheet" href="css/03.css">
-  <link rel="stylesheet" href="css/04.css">
-  <link rel="stylesheet" href="css/05.css">
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #091018; color: #edf3f8; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; }
+    main { max-width: 34rem; padding: 2rem; text-align: center; }
+    p { color: #aab8c4; }
+  </style>
 </head>
 <body>
-  <a class="skip-link" href="#main-content">Skip to composition workspace</a>
-
-  <header class="app-header">
-    <div class="brand-lockup">
-      <div class="brand-mark" aria-hidden="true">18</div>
-      <div>
-        <p class="product-name">Flow Atlas</p>
-        <p class="product-subtitle">Set 18 theorycraft</p>
-      </div>
-    </div>
-    <div class="data-status" id="data-status"></div>
-  </header>
-
-  <nav class="command-bar" aria-label="Composition filters">
-    <div class="filter-field filter-search">
-      <label for="search-filter">Search comps</label>
-      <input id="search-filter" type="search" autocomplete="off" placeholder="Blossom, reroll, AD…">
-    </div>
-    <div class="filter-field">
-      <label for="damage-filter">Damage</label>
-      <select id="damage-filter">
-        <option>All</option>
-        <option>AD</option>
-        <option>AP</option>
-      </select>
-    </div>
-    <div class="filter-field">
-      <label for="plan-filter">Plan</label>
-      <select id="plan-filter">
-        <option>All</option>
-        <option>Reroll</option>
-        <option>Fast 8</option>
-        <option>Fast 9</option>
-      </select>
-    </div>
-    <p class="result-count" id="result-count" aria-live="polite"></p>
-  </nav>
-
-  <main id="main-content" class="app-shell">
-    <aside class="composition-index" aria-label="Composition index">
-      <div class="index-heading">
-        <h1>Composition lines</h1>
-        <p>Choose the line that matches your opener, components, and economy.</p>
-      </div>
-      <div id="composition-list" class="composition-list"></div>
-    </aside>
-
-    <section id="composition-workspace" class="composition-workspace" aria-labelledby="workspace-title" tabindex="-1">
-      <div class="workspace-empty">
-        <h2 id="workspace-title">Select a composition</h2>
-        <p>The full starter → transition → endgame path will appear here.</p>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div>
-      <p>Pre-PBE theorycraft. Verify mechanics and numbers again when Set 18 reaches PBE.</p>
-      <p class="asset-note">Set 18 portrait and trait assets load from tactics.tools; deterministic initials keep every board readable offline.</p>
-    </div>
-    <div class="source-links" aria-label="Research sources">
-      <a href="https://tactics.tools/info/set-update">Set 18 data</a>
-      <a href="https://www.metatft.com/new-set">MetaTFT</a>
-      <a href="https://mobalytics.gg/tft/set18/champions">Mobalytics</a>
-      <a href="https://tftflow.com/">TFTFlow</a>
-      <a href="https://tftacademy.com/">TFT Academy</a>
-    </div>
-  </footer>
-
-  <script src="js/01-units.js"></script>
-  <script src="js/02-compositions.js"></script>
-  <script src="js/03-items-traits.js"></script>
-  <script src="js/04-assets.js"></script>
-  <script src="js/05-details-init.js"></script>
-  <script src="js/06-details-blossom-fast-8.js"></script>
-  <script src="js/07-details-inferno-reroll.js"></script>
-  <script src="js/08-details-solar-kayle-reroll.js"></script>
-  <script src="js/09-details-sprykin-flex-reroll.js"></script>
-  <script src="js/10-details-riftbeast-vertical.js"></script>
-  <script src="js/11-details-elderwood-fast-8.js"></script>
-  <script src="js/12-details-fast-9-peeba.js"></script>
-  <script src="js/20-analysis.js"></script>
-  <script src="js/21-render-foundation.js"></script>
-  <script src="js/22-render-sections.js"></script>
-  <script src="js/23-render-workspace.js"></script>
+  <main><h1>TFT Set 18 Flow Atlas</h1><p>Loading the latest verified atlas…</p></main>
+  <script src="release/v2/chunk-00.js"></script>
+  <script src="release/v2/chunk-01.js"></script>
+  <script src="release/v2/chunk-02.js"></script>
+  <script src="release/v2/chunk-03.js"></script>
+  <script src="release/v2/chunk-04-05.js"></script>
+  <script src="release/v2/chunk-06-07.js"></script>
+  <script src="release/v2/chunk-08-09.js"></script>
+  <script src="release/v2/chunk-10-11.js"></script>
+  <script>
+    (async () => {
+      const encoded = (window.__atlasChunks || []).join('');
+      if (!encoded) throw new Error('Atlas payload is missing.');
+      const bytes = Uint8Array.from(atob(encoded), character => character.charCodeAt(0));
+      const decompressed = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+      const html = await new Response(decompressed).text();
+      document.open();
+      document.write(html);
+      document.close();
+    })().catch(error => {
+      document.body.innerHTML = `<main><h1>Unable to load atlas</h1><p>${String(error)}</p></main>`;
+    });
+  </script>
 </body>
 </html>

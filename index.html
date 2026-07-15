@@ -23,13 +23,15 @@
   <script src="release/v2/chunk-06-07.js"></script>
   <script src="release/v2/chunk-08-09.js"></script>
   <script src="release/v2/chunk-10-11.js"></script>
+  <script src="release/v2/patch-2026-07-15.js"></script>
   <script>
     (async () => {
       const encoded = (window.__atlasChunks || []).join('');
       if (!encoded) throw new Error('Atlas payload is missing.');
       const bytes = Uint8Array.from(atob(encoded), character => character.charCodeAt(0));
       const decompressed = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
-      const html = await new Response(decompressed).text();
+      let html = await new Response(decompressed).text();
+      if (window.__patchAtlasHtml) html = window.__patchAtlasHtml(html);
       document.open();
       document.write(html);
       document.close();

@@ -69,7 +69,7 @@ const ITEMS = {`;
 };
 
 `;
-  html = html.replace('const MOBALYTICS_ITEM_SLUGS = {', economyData + 'const MOBALYTICS_ITEM_SLUGS = {');
+  html = html.replace('const ITEMS = {', economyData + 'const ITEMS = {');
   html = html.replace(
     'Object.assign(composition, COMPOSITION_DETAILS[composition.id]);',
     'Object.assign(composition, COMPOSITION_DETAILS[composition.id], ECON_GUIDANCE[composition.id]);',
